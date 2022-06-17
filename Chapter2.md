@@ -149,3 +149,69 @@ there are 2 options:
 
     1.we can unwrap output by adding “!” on line 3. (return thing [0x03]!)
     2.we can change declared output value type in line 1 (from String to String?)
+    
+    
+## Chapter 2 Day 4 Quests.
+
+>1.Deploy a new contract that has a Struct of your choosing inside of it (must be different than Profile).
+>
+>2.Create a dictionary or array that contains the Struct you defined.
+>
+>3.Create a function to add to that array/dictionary.
+
+        pub contract BagOfShitcoins {
+
+            pub var bagHolders: {Address: ShitCoinBag}
+
+            pub struct ShitCoinBag {
+                pub let shitCoinTicker: String
+                pub let shitCoinPrice: Int
+                pub let holder: Address
+
+                // You have to pass in 3 arguments when creating this Struct.
+                init(_shitCoinTicker: String, _shitCoinPrice: Int, _holder: Address) {
+                    self.shitCoinTicker = _shitCoinTicker
+                    self.shitCoinPrice = _shitCoinPrice
+                    self.holder = _holder
+                }
+            }
+
+            pub fun addProfile(shitCoinTicker: String, shitCoinPrice: Int, account: Address) {
+                let newBag= ShitCoinBag(_shitCoinTicker: shitCoinTicker, _shitCoinPrice: shitCoinPrice, _holder: account)
+                self.bagHolders[account] = newBag
+            }
+
+            init() {
+                self.bagHolders = {}
+            }
+
+        }
+        
+        
+>4.Add a transaction to call that function in step 3.
+
+        import BagOfShitcoins from 0x02
+
+        transaction(shitCoinTicker: String, shitCoinPrice: Int, holder: Address) {
+
+            prepare(signer: AuthAccount) {}
+
+            execute {
+                BagOfShitcoins.addProfile(shitCoinTicker: shitCoinTicker, shitCoinPrice: shitCoinPrice, account: holder)
+                log("done.")
+            }
+        }
+        
+![Pasted Graphic](https://user-images.githubusercontent.com/7878433/174269680-5b7793df-c1da-4adf-a97d-f8cee206320e.png)
+        
+
+>5.Add a script to read the Struct you defined.
+
+        import BagOfShitcoins from 0x02
+
+        pub fun main(account: Address): BagOfShitcoins.ShitCoinBag {
+            return BagOfShitcoins.bagHolders[account]!
+        }
+    
+![Pasted Graphic 1](https://user-images.githubusercontent.com/7878433/174269646-82b9fdef-f76c-4dd9-b2d4-4190f2ed2c58.png)
+
