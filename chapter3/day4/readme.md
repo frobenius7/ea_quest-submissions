@@ -43,11 +43,19 @@ Interfaces can be used to:
 
 >3.How would we fix this code?
 
+ - we need to remove or comment line 5 because var favouriteFruit not declared in our sturct 
+ - we need to declare function changeGreeting in interface 
+
+fixed version below
+
     pub contract Stuff {
 
         pub struct interface ITest {
           pub var greeting: String
-          pub var favouriteFruit: String
+          ////BEGIN FIX =)
+          //pub var favouriteFruit: String
+          pub fun changeGreeting(newGreeting: String): String  
+          ////END OF FIX
         }
 
         // ERROR:
