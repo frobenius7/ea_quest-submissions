@@ -9,7 +9,37 @@ Interfaces can be used to:
 
 >2.Define your own contract. Make your own resource interface and a resource that implements the interface. Create 2 functions. In the 1st function, show an example of not restricting the type of the resource and accessing its content. In the 2nd function, show an example of restricting the type of the resource and NOT being able to access its content.
 
-мчсясм
+      pub contract ShitcoinResourceBagWithInterface {
+
+          pub resource interface ICoin {
+            pub let ticker: String
+          }
+
+          pub resource Shitcoin: ICoin {
+            pub let ticker: String
+            pub let buyprice: UInt64
+            init(_ticker: String, _buyprice: UInt64) {
+              self.ticker = _ticker
+              self.buyprice = _buyprice
+            }
+          }
+
+          pub fun noInterface() {
+            let coin: @Shitcoin <- create Shitcoin(_ticker: "DOGE", _buyprice: 1)
+            log (coin.buyprice) // shows 1
+            destroy coin
+          } 
+
+          pub fun yesInterface() {
+            let coin: @Shitcoin{ICoin} <- create Shitcoin(_ticker: "DOGE", _buyprice: 1)
+            log (coin.buyprice) // ERROR : `member of restricted type is not acessible: buyprice`
+            destroy coin 
+          }
+
+      }
+      
+![image](https://user-images.githubusercontent.com/7878433/175315194-23bbd401-8a87-4447-a825-22aa7a5c43bf.png)
+
 
 >3.How would we fix this code?
 
