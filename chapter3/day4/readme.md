@@ -9,6 +9,7 @@ Interfaces can be used to:
 
 >2.Define your own contract. Make your own resource interface and a resource that implements the interface. Create 2 functions. In the 1st function, show an example of not restricting the type of the resource and accessing its content. In the 2nd function, show an example of restricting the type of the resource and NOT being able to access its content.
 
+```cadence
       pub contract ShitcoinResourceBagWithInterface {
 
           pub resource interface ICoin {
@@ -37,6 +38,7 @@ Interfaces can be used to:
           }
 
       }
+```
       
 ![image](https://user-images.githubusercontent.com/7878433/175315194-23bbd401-8a87-4447-a825-22aa7a5c43bf.png)
 
@@ -48,6 +50,7 @@ Interfaces can be used to:
 
 fixed version below
 
+```cadence
     pub contract Stuff {
 
         pub struct interface ITest {
@@ -80,3 +83,4 @@ fixed version below
           log(newGreeting)
         }
     }
+```
