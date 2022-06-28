@@ -37,5 +37,49 @@ pub contract ShitCoinHandlerWInterface {
 ```
 >Then, do the following:
 > - In a transaction, save the resource to storage and link it to the public with the restrictive interface.
+```cadence
+import ShitCoinHandlerWInterface from 0x04
+
+transaction() {
+  prepare(signer: AuthAccount) {
+    // Save the resource to account storage
+    signer.save(<- ShitCoinHandlerWInterface.createTestCoin(), to: /storage/MyTestResource)
+    // link it to the public with the restrictive interface..
+    signer.link<&ShitCoinHandlerWInterface.ShitCoin{ShitCoinHandlerWInterface.ICoin}>(/public/MyTestResource, target: /storage/MyTestResource)
+  }
+
+  execute {
+
+  }
+}
+```
 > - Run a script that tries to access a non-exposed field in the resource interface, and see the error pop up.
+```cadence
+import ShitCoinHandlerWInterface from 0x04
+
+pub fun main(address: Address): String {
+  let publicCapability: Capability<&ShitCoinHandlerWInterface.ShitCoin{ShitCoinHandlerWInterface.ICoin}> =
+    getAccount(address).getCapability<&ShitCoinHandlerWInterface.ShitCoin{ShitCoinHandlerWInterface.ICoin}>(/public/MyTestResource)
+
+  let testResource: &ShitCoinHandlerWInterface.ShitCoin{ShitCoinHandlerWInterface.ICoin} = publicCapability.borrow() ?? panic("The capability doesn't exist or you did not specify the right type when you got the capability.")
+  
+  // This wont work because `remark` is not in `&ShitCoinHandlerWInterface.Test{ShitCoinHandlerWInterface.ITest}`
+  return testResource.remark //member of restricted type is not accessible 
+}
+```
+
 > - Run the script and access something you CAN read from. Return it from the script.
+
+```cadence
+import ShitCoinHandlerWInterface from 0x04
+
+pub fun main(address: Address): String {
+  let publicCapability: Capability<&ShitCoinHandlerWInterface.ShitCoin{ShitCoinHandlerWInterface.ICoin}> =
+    getAccount(address).getCapability<&ShitCoinHandlerWInterface.ShitCoin{ShitCoinHandlerWInterface.ICoin}>(/public/MyTestResource)
+
+  let testResource: &ShitCoinHandlerWInterface.ShitCoin{ShitCoinHandlerWInterface.ICoin} = publicCapability.borrow() ?? panic("The capability doesn't exist or you did not specify the right type when you got the capability.")
+
+  // This works because `name` is in `&ShitCoinHandlerWInterface.ShiCoin{ShitCoinHandlerWInterface.Icoin}`
+  return testResource.ticker 
+}
+```
