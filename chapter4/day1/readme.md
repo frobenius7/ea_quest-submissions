@@ -66,7 +66,8 @@ transaction {
 }
 ```
 
-**transaction2 - save, borrow and log **
+**transaction2 - save, borrow, log resource**
+
 ```cadence
 import ShitCoinHandler from 0x03
 
@@ -75,10 +76,9 @@ transaction {
   prepare(signer: AuthAccount) {
     let testResource <- ShitCoinHandler.createTestCoin()
     signer.save(<- testResource, to: /storage/MyTestResource) 
-    let testResource2 <- signer.load<@ShitCoinHandler.ShitCoin>(from: /storage/MyTestResource)
-                              ?? panic("A `@ShitCoinHandler.ShitCoin` resource does not live here.")
-    log(testResource2.ticker) /// returns "DOGE"
-    destroy testResource2
+    let testResource2 = signer.borrow<&ShitCoinHandler.ShitCoin>(from: /storage/MyTestResource)
+                          ?? panic("A `@ShitCoinHandler.ShitCoin` resource does not live here.")
+    log(testResource2.ticker) // "DOGE"
   }
 
   execute {
