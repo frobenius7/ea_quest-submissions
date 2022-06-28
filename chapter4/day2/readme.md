@@ -19,6 +19,7 @@ pub contract ShitCoinHandlerWInterface {
 
   pub resource ShitCoin: ICoin {
     pub var ticker: String
+    pub var remark: String
 
     pub fun changeTicker(newTicker: String) {
       self.ticker = newTicker
@@ -26,6 +27,7 @@ pub contract ShitCoinHandlerWInterface {
 
     init() {
       self.ticker = "DOGE"
+      self.remark = "to the MOON"
     }
   }
 
@@ -63,7 +65,7 @@ pub fun main(address: Address): String {
 
   let testResource: &ShitCoinHandlerWInterface.ShitCoin{ShitCoinHandlerWInterface.ICoin} = publicCapability.borrow() ?? panic("The capability doesn't exist or you did not specify the right type when you got the capability.")
   
-  // This wont work because `remark` is not in `&ShitCoinHandlerWInterface.Test{ShitCoinHandlerWInterface.ITest}`
+  // This wont work because `remark` is not in `&ShitCoinHandlerWInterface.ShiCoin{ShitCoinHandlerWInterface.ICoin}`
   return testResource.remark //member of restricted type is not accessible 
 }
 ```
@@ -79,7 +81,7 @@ pub fun main(address: Address): String {
 
   let testResource: &ShitCoinHandlerWInterface.ShitCoin{ShitCoinHandlerWInterface.ICoin} = publicCapability.borrow() ?? panic("The capability doesn't exist or you did not specify the right type when you got the capability.")
 
-  // This works because `name` is in `&ShitCoinHandlerWInterface.ShiCoin{ShitCoinHandlerWInterface.Icoin}`
+  // This works because `name` is in `&ShitCoinHandlerWInterface.ShiCoin{ShitCoinHandlerWInterface.ICoin}`
   return testResource.ticker 
 }
 ```
