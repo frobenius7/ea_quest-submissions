@@ -2,8 +2,11 @@
 
 >1.What does .link() do?
 
+"link" function creating something called capability (i.e. "mapping" from /public/ or /private/ path to our /storage/, so data can be accessed from "outside".
 
 >2.In your own words (no code), explain how we can use resource interfaces to only expose certain things to the /public/ path.
+
+We need to define a new resource interface in contract code, so it will only expose some things and then when we use .link() function we restrict reference by using this interface. 
 
 
 >3.Deploy a contract that contains a resource that implements a resource interface. Then, do the following:
