@@ -24,30 +24,36 @@ pub contract CryptoPoops {
     }
   }
 
-  // This is a resource interface that allows us to... you get the point.
+  // This is a resource interface that allows us to deposit NFT token in collection,
+  //get IDs of owned tokens and borrow nft from collection 
   pub resource interface CollectionPublic {
     pub fun deposit(token: @NFT)
     pub fun getIDs(): [UInt64]
     pub fun borrowNFT(id: UInt64): &NFT
   }
-
+  
+  //this is resource that contains our collection of NFTs (resource type NFT)
   pub resource Collection: CollectionPublic {
     pub var ownedNFTs: @{UInt64: NFT}
 
+    //deposit NFT in our collection
     pub fun deposit(token: @NFT) {
       self.ownedNFTs[token.id] <-! token
     }
 
+    //withdraw NFT from our collection
     pub fun withdraw(withdrawID: UInt64): @NFT {
       let nft <- self.ownedNFTs.remove(key: withdrawID) 
               ?? panic("This NFT does not exist in this Collection.")
       return <- nft
     }
 
+    //Get IDs what we have in our collection
     pub fun getIDs(): [UInt64] {
       return self.ownedNFTs.keys
     }
 
+    //this function helps us to read NFT
     pub fun borrowNFT(id: UInt64): &NFT {
       return (&self.ownedNFTs[id] as &NFT?)!
     }
@@ -60,17 +66,21 @@ pub contract CryptoPoops {
       destroy self.ownedNFTs
     }
   }
-
+  
+  //create emtpty collection of resources
   pub fun createEmptyCollection(): @Collection {
     return <- create Collection()
   }
 
+  //Minter resource - allows anyone who holds it to mint NFT
   pub resource Minter {
 
+    //mints a new NFT resource
     pub fun createNFT(name: String, favouriteFood: String, luckyNumber: Int): @NFT {
       return <- create NFT(_name: name, _favouriteFood: favouriteFood, _luckyNumber: luckyNumber)
     }
 
+    //creates minter resource
     pub fun createMinter(): @Minter {
       return <- create Minter()
     }
