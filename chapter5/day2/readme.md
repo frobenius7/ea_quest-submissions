@@ -35,7 +35,7 @@ pub contract interface ITest {
 }
 ```
 
-The implementing contract:
+The implementing contract: (with errors)
 
 ```cadence
 pub contract Test {
@@ -50,6 +50,32 @@ pub contract Test {
   }
 
   pub resource Stuff: IStuff {
+    pub var favouriteActivity: String
+
+    init() {
+      self.favouriteActivity = "Playing League of Legends."
+    }
+  }
+
+  init() {
+    self.number = 0
+  }
+}
+```
+
+The implementing contract: (corrected version)
+```cadence
+import ITest from 0x02 
+//we have added restriction to ITest interface
+pub contract Test:ITest {
+  pub var number: Int
+  
+  pub fun updateNumber(newNumber: Int) {
+    self.number = 5
+  }
+  // resource `Test.Stufff` is 
+  // required conformance to resource interface `ITest.IStuff`
+  pub resource Stuff: ITest.IStuff {
     pub var favouriteActivity: String
 
     init() {
