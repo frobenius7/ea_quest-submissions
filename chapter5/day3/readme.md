@@ -2,6 +2,9 @@
 
 >1.What does "force casting" with as! do? Why is it useful in our Collection?
 
+"force cast" operator "downcasts" our generic type (@NonFungibleToken.NFT) to be a more specific type (@NFT). 
+Now we can be sure that we can only deposit NFT only specific type into our Collection.
+
 >2.What does auth do? When do we use it?
 
 >3.This last quest will be your most difficult yet. Take this contract:
