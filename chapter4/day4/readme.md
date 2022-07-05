@@ -15,6 +15,7 @@ pub contract CryptoPoops {
     pub let favouriteFood: String
     pub let luckyNumber: Int
 
+    //initialize of NFT resource 
     init(_name: String, _favouriteFood: String, _luckyNumber: Int) {
       self.id = self.uuid
 
@@ -58,10 +59,12 @@ pub contract CryptoPoops {
       return (&self.ownedNFTs[id] as &NFT?)!
     }
 
+    //initialize of collection
     init() {
       self.ownedNFTs <- {}
     }
-
+    
+    //destructor - need to declare destructor function of collection 
     destroy() {
       destroy self.ownedNFTs
     }
@@ -86,7 +89,8 @@ pub contract CryptoPoops {
     }
 
   }
-
+  
+  //initialization of minter resource
   init() {
     self.totalSupply = 0
     self.account.save(<- create Minter(), to: /storage/Minter)
