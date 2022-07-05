@@ -92,6 +92,7 @@ pub contract Test {
   // TODO
   // Tell me whether or not this function will log the name.
   // name: 'Jacob'
+  // Yes, it will log the name because 'jacob'.lenght==5 == TRUE.
   pub fun numberOne(name: String) {
     pre {
       name.length == 5: "This name is not cool enough."
@@ -102,6 +103,8 @@ pub contract Test {
   // TODO
   // Tell me whether or not this function will return a value.
   // name: 'Jacob'
+  // PRE will work because more than 1 symbol, POST is ok, beacuse it == 'Jacob Tucker' after concat
+  // so YES. it will return value.
   pub fun numberTwo(name: String): String {
     pre {
       name.length >= 0: "You must input a valid name."
@@ -118,6 +121,7 @@ pub contract Test {
     // TODO
     // Tell me whether or not this function will log the updated number.
     // Also, tell me the value of `self.number` after it's run.
+    // NO, because there is no log function, but updates self.number = 1
     pub fun numberThree(): Int {
       post {
         before(self.number) == result + 1
