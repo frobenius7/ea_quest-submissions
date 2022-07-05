@@ -40,7 +40,48 @@ pub contract ShitCoinHandlerWInterface {
 }
 ```
 
-
 >3.Using the contract in step 2), add some pre conditions and post conditions to your contract to get used to writing them out.
+
+```cadence
+pub contract ShitCoinHandlerWInterface {
+
+  //event of changing ticker
+  pub event TickerChanged(newTicker: String, prevTicker: String)
+
+  pub resource interface ICoin {
+    pub var ticker: String
+  }
+
+  pub resource ShitCoin: ICoin {
+    pub var ticker: String
+    pub var remark: String
+
+    pub fun changeTicker(newTicker: String) {
+      //checks if ticker has at least 1 letter
+      pre {
+        newTicker.length > 0: "Ticker name is too short."
+      }
+      //checks if new ticker is not equal previous state of ticker
+      post {
+        before(self.ticker) != self.ticker : "Ticker already has this name before"
+      }    
+      var prevTicker = self.ticker
+      self.ticker = newTicker
+      //broadcast event/
+      emit TickerChanged(newTicker: newTicker, prevTicker: prevTicker)
+    }
+
+    init() {
+      self.ticker = "DOGE"
+      self.remark = "to the MOON"
+    }
+  }
+
+  pub fun createTestCoin(): @ShitCoin {
+    return <- create ShitCoin()
+  }
+
+}
+```
 
 >4.For each of the functions below (numberOne, numberTwo, numberThree), follow the instructions.
