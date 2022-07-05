@@ -90,7 +90,7 @@ pub contract CryptoPoops {
 
   }
   
-  //initialization of minter resource
+  //initialization of minter resource and saving it to contract deployer storage.
   init() {
     self.totalSupply = 0
     self.account.save(<- create Minter(), to: /storage/Minter)
