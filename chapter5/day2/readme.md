@@ -2,7 +2,11 @@
 
 >1.Explain why standards can be beneficial to the Flow ecosystem.
 
+Standardizing is beneficial so that a client using multiple contracts can have a singular way of interacting with all of those contracts. For example, all NFT contracts have a resource called Collection that has a deposit and withdraw function. This way, even if the client DApp is interacting with 100 NFT contracts, it only has to import the NonFungibleToken standard to call those functions, since it's all under one generic type.
+
 >2.What is YOUR favourite food?
+
+My favourite food is Pasta Carbonara and Philadelphia roll =)
 
 >3.Please fix this code (Hint: There are two things wrong):
 
