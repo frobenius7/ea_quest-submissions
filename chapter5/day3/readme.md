@@ -7,6 +7,10 @@ Now we can be sure that we can only deposit NFT only specific type into our Coll
 
 >2.What does auth do? When do we use it?
 
+`auth` keyword helps us to get "authorized feference". 
+When we are using references, if we want to downcast, we must have an `auth` reference.
+
+
 >3.This last quest will be your most difficult yet. Take this contract:
 
 original contract
