@@ -105,8 +105,12 @@ solution contract:
 
 ```cadence
 import NonFungibleToken from 0x02
+
 pub contract CryptoPoops: NonFungibleToken {
   pub var totalSupply: UInt64
+
+  pub let CollectionPublicPath: PublicPath
+  pub let CollectionStoragePath: StoragePath  
 
   pub event ContractInitialized()
   pub event Withdraw(id: UInt64, from: Address?)
@@ -133,7 +137,7 @@ pub contract CryptoPoops: NonFungibleToken {
     pub fun deposit(token: @NonFungibleToken.NFT)
     pub fun getIDs(): [UInt64]
     pub fun borrowNFT(id: UInt64) : &NonFungibleToken.NFT
-    pub fun borrowAuthNFT(id: UInt64) : &NonFungibleToken.NFT
+    pub fun borrowAuthNFT(id: UInt64) : &NFT
   }
 
   pub resource Collection: NonFungibleToken.Provider, NonFungibleToken.Receiver, NonFungibleToken.CollectionPublic, MyCollectionPublic {
@@ -192,8 +196,76 @@ pub contract CryptoPoops: NonFungibleToken {
 
   init() {
     self.totalSupply = 0
+    self.CollectionPublicPath = /public/CPCollection
+    self.CollectionStoragePath = /storage/CPCollection 
     emit ContractInitialized()
     self.account.save(<- create Minter(), to: /storage/Minter)
   }
+}
+```
+
+Script to read metadata 
+```cadence
+import CryptoPoops from 0x01
+import NonFungibleToken from 0x02
+
+// This script borrows an NFT from a collection
+pub fun main(address: Address, id: UInt64): &CryptoPoops.NFT {
+    let account = getAccount(address)
+    let collectionRef = getAccount(address).getCapability(/public/CPCollection)
+        .borrow<&CryptoPoops.Collection{CryptoPoops.MyCollectionPublic}>()
+        ?? panic("Could not borrow capability from public collection")
+
+    let nft = collectionRef.borrowAuthNFT(id: id) 
+
+    log(nft.name)
+
+    return nft
+}
+```
+
+Transaction - Init acc
+```cadence
+import CryptoPoops from 0x01
+import NonFungibleToken from 0x02
+
+transaction {
+
+    prepare(signer: AuthAccount) {
+        signer.save(<- CryptoPoops.createEmptyCollection(), to: /storage/CPCollection)
+
+        signer.link<&CryptoPoops.Collection{CryptoPoops.MyCollectionPublic, NonFungibleToken.Receiver, NonFungibleToken.CollectionPublic}>
+            (CryptoPoops.CollectionPublicPath, target: CryptoPoops.CollectionStoragePath)
+    }
+}
+```
+
+transaction - mint NFT
+```cadence
+import CryptoPoops from 0x01
+
+transaction(name: String, food: String, number: Int, recipient: Address) {
+
+    let minter: &CryptoPoops.Minter
+
+    let recipientCollectionRef: &CryptoPoops.Collection{CryptoPoops.MyCollectionPublic}
+
+    prepare(signer: AuthAccount) {
+
+        self.minter = signer.borrow<&CryptoPoops.Minter>(from: /storage/Minter)
+            ?? panic("Account does not store an object at the specified path")
+
+        // Borrow the recipient's public NFT collection reference
+        self.recipientCollectionRef = getAccount(recipient)
+            .getCapability(CryptoPoops.CollectionPublicPath)
+            .borrow<&CryptoPoops.Collection{CryptoPoops.MyCollectionPublic}>()
+            ?? panic("Could not get receiver reference to the NFT Collection")
+    }
+
+    execute {
+        // Mint the NFT and deposit it to the recipient's collection
+        let nft <- self.minter.createNFT(name: name, favouriteFood: food, luckyNumber: number)
+        self.recipientCollectionRef.deposit(token: <- nft)
+    }
 }
 ```
